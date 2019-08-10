@@ -4,6 +4,7 @@ const ctx = canvas.getContext('2d');
 
 const game = {
 	tileSize: 10,
+	playerSize: 5,
 	gridSize: 500,
 	fps: 60,
 };
@@ -17,13 +18,27 @@ const gameState = {
 
 const player = {
 	x: 0,
-	y: 50,
+	y: 49,
 };
 
+function clearScreen(ctx) {
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0,0,game.gridSize, game.gridSize);
+}
+
+function drawTitlePage(ctx) {
+	ctx.fillStyle = 'white';
+	ctx.font ='50px serif';
+	ctx.fillText('Tiny Platformer', 50, game.gridSize /2);
+	ctx.font = '25px serif';
+	ctx.fillText('Press p to play', 150, (game.gridSize /4) * 3);
+}
+
 function render() {
+	clearScreen(ctx);
+
 	if(!gameState.playing) {
-		ctx.font ='50px serif';
-		ctx.fillText('Tiny Platformer', 100, game.gridSize /2, )
+		drawTitlePage(ctx);
 	}
 
 }
@@ -42,7 +57,40 @@ function tick() {
 
 	gameState.last = now;
 
-	window.requestAnimationFrame(tick);
+	if(gameState.playing) {
+		window.requestAnimationFrame(tick);
+	}
 }
 
-window.requestAnimationFrame(tick);
+//window.requestAnimationFrame(tick);
+
+clearScreen(ctx);
+drawTitlePage(ctx);
+
+function startGame(gameState) {
+	gameState.playing = true;
+}
+
+function stopGame(gameState) {
+	gameState.playing = false;
+}
+
+function handleKeyPress(event, keyCode, up) {
+	switch(keyCode) {
+		case 'p':
+			console.log('p');
+			startGame(gameState);
+			window.requestAnimationFrame(tick);
+			break;
+		case 'q':
+			console.log('q');
+			stopGame(gameState);
+			break;
+	}
+}
+
+function keyUpHandler(event) {
+	handleKeyPress(event, event.key, true);
+}
+
+document.addEventListener('keyup', keyUpHandler, false);
